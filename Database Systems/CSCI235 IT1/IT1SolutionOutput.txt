@@ -1,0 +1,416 @@
+Name: WHYE LI HENG, DOMINIC
+UOW ID: 9891092
+
+Task 1 (1.0 mark)
+Consider the following description of a sample database domain.
+A university plans to implement a database to store information about the
+campuses, lecturers working at the campuses, buildings located at the campuses, offices of lecturers within the buildings. A lecturer can work at more than one campus and at each campus he/she is assigned to one office. A campus is identified by a campus name. Lecturers have unique staff numbers. A building is described by a number which is unique within a campus. An office is described by a number which is unique within a building.
+
+A database designer created the following relational schema.
+UNI(campus-name, staff-number, building-number, office-number)
+List all non trivial functional dependencies you can find in a description of sample database domain given above.
+
+-lecturer can work at more than one campus
+-lecturer is assigned to exactly one office
+-the campus has a unique name (globally)
+-lecturers have a unique staff number
+-building is identified by a number that is unique within a campus
+-office is identified by a number that is unique within a building
+
+UNI(campus-name, staff-number, building-number, office-number)
+
+Campus-name (campus identifier)
+Staff-number (staff identifier)
+Building-number (building identifier) within campus
+Office-number (office identifier) within building
+
+Definition of non trivial FD (X->Y , where Y is not a subset of X)
+
+Answer:
+
+1.(Campus-name,staff-number) -> building-number, office-number
+
+Explanation: because building number is unique within the campus and office number is unique within the building, you can locate it by deriving from the name of the campus and the unique staff number
+
+2.(Campus-name,building-number,office-number) -> staff-number
+
+Explanation: because from the campus name and the unique building and office number, you can retrieve the staff number as each lecturer is only assigned to one office. However, you cannot locate the campus, building or office using staff number as it is not unique globally and the lecturer can work at more than one campus
+
+
+
+
+
+Task 2 (1.0 mark)
+Consider a relational schema 𝑅(𝑉, 𝑊, 𝑋, 𝑌, 𝑍) and the following set of functional
+dependencies valid in the schema:
+(i) {𝑍 → 𝑉, 𝑉 → 𝑊, 𝑋 → 𝑌}
+List all minimal keys valid in the schema. List all derivations of function
+dependencies that lead to the identification of minimal super keys. Note, a
+schema can have more than one minimal super key. (0.3 mark)
+
+Functional dependencies (FD):
+Z -> V
+V -> W
+X -> Y
+
+Z -> V , V -> W = Z -> W (transitivity axiom)
+Hence, V and W can be derived from Z 
+Z+ = {Z,V,W}
+
+X -> Y 
+
+Hence, Y can be derived from X
+X+ = {X,Y}
+
+Answer: {X,Z} is the minimal key as all the attributes can be derived from this
+
+
+(ii) {𝑉 → 𝑊, 𝑊 → 𝑋𝑌, 𝑋 → 𝑍, 𝑍 → 𝑉𝑋}
+List all minimal keys valid in the schema. List all derivations of function
+dependencies that lead to the identification of minimal super keys. Note, a
+schema can have more than one minimal super key. (0.4 mark)
+
+Functional Dependencies (FD):
+V -> W
+W -> X,Y
+X -> Z
+Z -> V,X
+
+Identification of minimal super keys:
+
+Closure of V:
+V -> W (given FD)
+W -> X,Y   =   W -> X and W -> Y (via decomposition)
+V -> W -> X   hence, V -> X (transitivity axiom)
+V -> W -> Y   hence, V -> Y (transitivity axiom)
+X -> Z (given FD)  hence, V -> X -> Z = V -> Z (transitivity axiom)
+
+V+ = {V, W, X, Y, Z} 
+(V is a minimal super key)
+
+Closure of W:
+W -> X,Y   =   W -> X and W -> Y (via decomposition)
+
+Since X -> Z (given FD) and W -> X , W -> X -> Z  = W -> Z (transitivity axiom)
+Z -> V,X (given FD)  ,then Z -> V and Z -> X (via decomposition)
+W -> Z (transitivity axiom) and Z -> V (decomposition) , then W -> Z -> V = W -> V
+
+W+ = {W, X, Y, Z, V}
+W is a superkey, because W+ = { W, X, Y, Z,V}
+W is not a minimal superkey, because V ⊂ W, and V is also a superkey
+
+Closure of X:
+X -> Z (given FD)
+Z -> V,X (given FD)  ,then Z -> V and Z -> X (via decomposition)
+X -> Z -> V  , then X -> V (transitivity axiom)
+V -> W (given FD) , then X -> V -> W hence,  X -> W (transitivity axiom)
+W -> X,Y   =   W -> X and W -> Y (via decomposition)
+X -> W -> Y (transitivity axiom) X -> Y
+
+X+ = {X, Z, V, W, Y}
+(X is a minimal super key)
+
+Closure of Z:
+Z -> V,X (given FD)  ,then Z -> V and Z -> X (via decomposition)
+V -> W (given FD) , then Z -> V -> W hence,  Z -> W (transitivity axiom)
+W -> X,Y (given FD)  =   W -> X and W -> Y (via decomposition)
+Z -> W -> X , then Z -> X (transitivity axiom)
+Z -> W -> Y , then Z -> Y (transitivity axiom)
+
+Z+ = {Z, V, W, X, Y}
+(Z is a minimal super key)
+
+Closure of Y:
+Since there is no FD that starts from Y , Y is not a super key 
+
+Using reflexivity rule:
+V+, W+, X+, Z+ will always have their own attribute present in the closure
+
+But: Since V → W, and V⁺ = all attributes,
+W is not minimal
+
+Answer: V, X and Z are minimal keys
+
+(iii) {𝑉 → 𝑊, 𝑌𝑊 → 𝑋}
+List all minimal keys valid in the schema. List all derivations of function
+dependencies that lead to the identification of minimal super keys. Note, a
+schema can have more than one minimal super key. (0.3 mark)
+
+Functional dependencies(FD):
+
+V -> W
+YW -> X
+
+Closure of V:
+V+ = {V,W}
+Missing: XYZ
+V is not a super key
+
+Closure of Y:
+Y+ = {Y}
+No FD starts with Y
+
+Closure of VY:
+{V,Y}
+V -> W
+{V,Y,W}
+YW -> X
+{V,Y,W,X}
+Missing: Z
+VY is not a super key
+
+Since Z is not part of any of the functional dependencies, Z could not be determined by any other attributes. Hence, Z must be added in the candidate key to cover all attributes
+
+Answer: {V, Y, Z} is the minimal key
+
+
+
+Task 3 (1.0 mark) 
+Consider the relational schemas given below and the respective sets of functional dependencies valid in the schemas.
+
+For each one of the relational schemas, determine the highest normal form, which is valid for a schema. Justify your answer. Justification must include the derivations of minimal keys from the functional dependencies and testing the validity of all normal forms (2NF, 3NF, BCNF) against the relational schemas, minimal keys, and functional dependencies.
+
+If a schema is not in BCNF, then decompose it into a minimum number of schemas so that each one of them is in BCNF. Justify your answer.
+
+A correct guess without the comprehensive justifications scores no marks!
+
+(i) PLAYER( pnum, team, name, position, address )
+    pnum -> team, name, position, address 
+    team -> address 
+
+	FD1: pnum -> team, name, position, address
+	FD2: team -> address
+
+	From FD1: pnum functionally determines all attributes.
+	Therefore, pnum is a candidate key.
+	
+	Check for 2NF:
+	Only candidate key is pnum, so no partial dependencies are possible.
+	All non-prime attributes (team, name, position, address) are fully dependent on pnum.
+ 	hence -> PLAYER is in 2NF
+	
+	The dependency team -> address does not violate 2NF as team is not a subset of any candidate key, hence not a partial dependency.
+
+	Check for 3NF:
+	FD1: pnum -> team, name, position, address
+	LHS pnum is a candidate key -> satisfies 3NF
+	
+	FD2: team -> address
+	team is not a candidate key
+	address is not a prime attribute
+	-> Violates 3NF
+	->PLAYER is NOT in 3NF
+	
+	BCNF Decomposition:
+	PLAYER_ADDRESS(team, address)
+	FD: team ->address
+	team is the candidate key -> PLAYER_ADDRESS is in BCNF
+
+	PLAYER(pnum, team, name, position)
+	FD: pnum -> team, name, position
+	pnum is the candidate  key -> PLAYER is in BCNF
+
+	Final BCNF Decomposition:
+	PLAYER_ADDRESS(team, address)
+	PLAYER(pnum, team, name, position)
+
+
+(ii)  ROOM( bnum, rnum, area, type )
+      bnum, rnum -> area, type 
+           rnum -> area, type
+
+	Functional Dependencies (FDs):
+	FD1: bnum, rnum -> area, type
+	FD2: rnum -> area, type
+	
+	Closure of {bnum, rnum}:
+	From FD1, bnum, rnum -> area, type
+
+	{bnum, rnum}+ = {bnum, rnum, area, type}
+	{bnum, rnum} is a superkey
+	
+	Closure of {rnum}:
+	From FD2, rnum -> area, type
+	⇒ {rnum}+ = {rnum, area, type}
+
+	Does not include bnum ⇒ Not a superkey
+
+	Closure of {bnum}:
+	No FDs with bnum on LHS ⇒ {bnum}+ = {bnum} 
+
+	Therefore, the only candidate key = {bnum, rnum}
+	
+	All attributes contain atomic values
+	ROOM is in 1NF
+
+	2NF = 1NF + no partial dependencies on a proper subset of any candidate key.
+	Candidate key = {bnum, rnum}
+	Non-prime attributes = {area, type}
+
+	Check FD2:
+	rnum → area, type
+	rnum is a proper subset of candidate key {bnum, rnum}
+	⇒ Partial dependency exists
+	ROOM is not in 2NF
+
+	Since ROOM is not in 2NF, it is automatically not in 3NF
+	ROOM is not in 3NF
+	
+	A relation is in BCNF if for every FD X → Y, X is a superkey.
+	Check each FD:
+
+	FD1: bnum, rnum -> area, type
+  	LHS is a superkey ⇒ satisfies BCNF 
+
+	FD2: rnum -> area, type
+  	-> LHS (rnum) is not a superkey ⇒ violates BCNF
+
+Answer:
+	ROOM_DETAIL(rnum, area, type)
+	ROOM_ASSIGN(bnum, rnum)
+
+	
+
+(iii) CONNECTION( bnum, rnum, ip ) 
+     bnum, rnum -> ip 
+     ip -> rnum
+	
+	FD1: bnum, rnum -> ip
+	So bnum, rnum is a superkey
+	{bnum, rnum}+ = {bnum, rnum, ip}
+	->This covers all attributes
+	So {bnum, rnum} is a candidate key
+	
+	FD2: ip -> rnum
+	so ip determines rnum
+	However, we cannot replace rnum with ip in the candidate key {bnum, rnum}, since ip does not determine bnum.
+	Therefore, {bnum, rnum} is the only candidate key.
+	
+	Check for 2NF:
+	Candidate key = {bnum, rnum} (composite key)
+	FD2: ip -> rnum
+	ip is not a subset of the candidate key -> not a partial dependency 
+
+	FD1: bnum, rnum -> ip
+	Full key 
+	-> No partial dependencies
+	-> CONNECTION is in 2NF
+	
+	Check for 3NF:
+	FD1: bnum, rnum -> ip
+	LHS is candidate key 
+
+	FD2: ip -> rnum
+	LHS (ip) is not a superkey
+	RHS (rnum) is part of the candidate key
+	->  Satisfies 3NF
+	-> CONNECTION is in 3NF
+
+	 Check for BCNF:
+	FD1: bnum, rnum → ip
+	LHS is a candidate key 
+	FD2: ip -> rnum
+	LHS ip is not a superkey
+	Violates BCNF
+
+	Decompose to BCNF:
+	 IP_ROOM(ip, rnum)
+	FD: ip -> rnum
+	ip is the candidate key 
+
+	IP_BLOCK(bnum, ip)
+	In IP_BLOCK, bnum, ip can determine the original rnum (from IP_ROOM), and therefore restore original relation
+	So, bnum, ip is the candidate key 
+
+	Final BCNF Decomposition:
+	IP_ROOM(ip, rnum)
+	IP_BLOCK(bnum, ip)
+
+(iv) COURSE (student#, course#, lecturer, department) 
+    course#, student# -> lecturer 
+    course#, student# -> department 
+    lecturer -> course
+	
+	Given FDs:
+	FD1: student#, course# → lecturer
+	FD2: student#, course# → department
+	FD3: lecturer → course#
+	
+	From FD1 & FD2:
+	student#, course# -> lecturer, department
+	-> So {student#, course#} determines all other attributes
+	-> candidate key
+
+	Check for 3NF:
+	FD1 & FD2:
+	LHS is the candidate key 
+	FD3: lecturer -> course#
+	LHS (lecturer) is not a superkey
+	RHS (course#) is a prime attribute (part of candidate key {student#, course#})
+	-> Satisfies 3NF
+	-> COURSE is in 3NF
+
+	Check for BCNF:
+	FD1 & FD2: LHS is candidate key (doesn't violate BCNF)
+	FD3: lecturer -> course#
+	lecturer is not a superkey -> Violates BCNF
+
+	Decompose into BCNF:
+	FD3 violates BCNF: lecturer -> course#
+	Decomposition:
+	COURSE(lecturer, course#)
+	From FD3: lecturer -> course#
+	Candidate key: lecturer -> satisfy BCNF
+	ENROLLMENT(student#, course#, department)
+	
+	Final BCNF Decomposition:
+	COURSE(lecturer, course#)
+	ENROLLMENT(student#, course#, department)
+
+(v) Product (s#, city, p#, quantity, status)   
+s# -> city  
+s# ->  status 
+city ->  status 
+s#, p# -> quantity 
+s#, p# ->  city 
+s#, p# ->  status
+
+	Given Functional Dependencies (FDs):
+	s# → city
+	s# → status
+	city → status
+	s#, p# → quantity
+	s#, p# → city
+	s#, p# → status
+	
+	s#, p# → quantity, city, status
+	->Covers all attributes in the relation 
+	Candidate key = {s#, p#}
+	
+	2NF
+	Composite key: {s#, p#}
+	Non-prime attributes: quantity, city, status
+
+	Check for partial dependencies:
+	FD 1: s# → city  ( partial dependency)
+	FD 2: s# → status ( partial dependency)
+	FD 3: city → status (does not involve composite key)
+	->  Not in 2NF (violates due to FDs 1 & 2)
+	
+	Decompose into BCNF:
+
+	SUPPLIER(s#, city)
+	Candidate key: s# 
+	
+	SUPPLIER_STATUS(s#, status)
+	
+	SUPPLIER_PRODUCT(s#, p#, quantity)
+	Candidate key {s#, p#} 
+
+	city -> status is now separated, but may still live in SUPPLIER
+	In SUPPLIER(s#, city), city -> status still exists, but status is no longer present, so no violation of BCNF
+
+	Final BCNF Decomposition:
+	SUPPLIER(s#, city)
+	SUPPLIER_STATUS(s#, status)
+	SUPPLIER_PRODUCT(s#, p#, quantity)
