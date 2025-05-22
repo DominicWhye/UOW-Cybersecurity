@@ -1,0 +1,171 @@
+>Q1) db.Subject.aggregate([{ $count: "totalSubjects" }])
+{
+  totalSubjects: 7
+}
+
+>Q2) db.Subject.aggregate([ { $match: { "subject.prerequisite": { $exists: false } } }, { $count: "noPrereqSubjects" } ])
+{
+  noPrereqSubjects: 4
+}
+
+>Q3) db.Subject.aggregate([ { $match: { "subject.credit": { $gt: 3 } } }, { $count: "moreThan3Credits" } ])
+{
+  moreThan3Credits: 1
+}
+
+>Q4) db.Subject.aggregate([ { $sort: { "subject.credit": -1 } }, { $limit: 1 }, { $project: { _id:0, title:"$subject.subTitle", type:"$subject.type", credit:"$subject.credit" } } ])
+{
+  title: 'Final Year Project',
+  type: 'Core',
+  credit: 6
+}
+
+>Q5) db.Subject.aggregate([ { $match: { "subject.credit": 3 } }, { $project: { _id:0, title:"$subject.subTitle", type:"$subject.type", credit:"$subject.credit" } }, { $sort: { title:1 } } ])
+{
+  title: 'Algorithm and Data Structures',
+  type: 'Core',
+  credit: 3
+}
+{
+  title: 'Algorithm and Problem Solving',
+  type: 'Core',
+  credit: 3
+}
+{
+  title: 'Applied Programming',
+  type: 'Core',
+  credit: 3
+}
+{
+  title: 'Database Systems',
+  type: 'Core',
+  credit: 3
+}
+{
+  title: 'Procedural Programming',
+  type: 'Core',
+  credit: 3
+}
+{
+  title: 'Professional Practice and Ethics',
+  type: 'Elective',
+  credit: 3
+}
+
+>Q6) db.Subject.aggregate([ { $group: { _id:"$subject.type", count:{ $sum:1 } } }, { $project:{ _id:0, type:"$_id", count:1 } } ])
+{
+  count: 6,
+  type: 'Core'
+}
+{
+  count: 1,
+  type: 'Elective'
+}
+
+>Q7) db.Subject.aggregate([ { $unwind:"$subject.book" }, { $match:{ "subject.book.yearPub":2012 } }, { $project:{ _id:0, ISBN:"$subject.book.ISBN", title:"$subject.book.bookTitle" } } ])
+{
+  ISBN: '13:978-0-13-231681-1',
+  title: 'Introduction to the Design and Analysis of Algorithms'
+}
+{
+  ISBN: '13:978-0-273-75983-6',
+  title: 'Starting Out With C++: From Control Structures through Objects'
+}
+{
+  ISBN: '13:978-0-273-75983-6',
+  title: 'Starting Out With C++: From Control Structures through Objects'
+}
+{
+  ISBN: '13:978-0-13-231681-1',
+  title: 'Introduction to the Design and Analysis of Algorithms'
+}
+
+>Q8) db.Subject.aggregate([ { $match:{ "subject.subCode":"CSCI235" } }, { $unwind:"$subject.book" }, { $project:{ _id:0, title:"$subject.book.bookTitle", author:"$subject.book.author", type:"$subject.book.bookType" } } ])
+{
+  title: 'Fundamentals of Database Systems',
+  author: [
+    'Ramez Elmasri',
+    'Shamkant B Navathe'
+  ],
+  type: 'textbook'
+}
+{
+  title: 'Database Management Systems',
+  author: [
+    'Raghur Ramakrishnan',
+    'Johannes Gehrke'
+  ],
+  type: 'reference'
+}
+
+>Q9) db.Subject.aggregate([ { $unwind:"$subject.book" }, { $addFields:{ authorCount:{ $size:"$subject.book.author" } } }, { $match:{ authorCount:{ $gte:2,$lte:3 } } }, { $project:{ _id:0, ISBN:"$subject.book.ISBN", title:"$subject.book.bookTitle", publisher:"$subject.book.publisher" } } ])
+{
+  ISBN: '13:978-0-13-231681-1',
+  publisher: 'Pearson'
+}
+{
+  ISBN: '13:978-0-136-08620-8',
+  title: 'Fundamentals of Database Systems',
+  publisher: 'Addison-Wesley'
+}
+{
+  ISBN: '0-07-246563-8',
+  title: 'Database Management Systems',
+  publisher: 'McGraw-Hill'
+}
+
+>Q10) db.Subject.aggregate([ { $unwind:"$subject.book" }, { $project:{ _id:0, subCode:"$subject.subCode", bookTitle:"$subject.book.bookTitle", publisher:"$subject.book.publisher" } }, { $sort:{ subCode:1, publisher:-1 } } ])
+{
+  subCode: 'CSCI103',
+  bookTitle: 'Introduction to the Design and Analysis of Algorithms',
+  publisher: 'Pearson'
+}
+{
+  subCode: 'CSCI103',
+  publisher: 'Pearson'
+}
+{
+  subCode: 'CSCI114',
+  bookTitle: 'C++ Programming - Program design including data structure',
+  publisher: 'CENGAGE Learning'
+}
+{
+  subCode: 'CSCI114',
+  bookTitle: 'Starting Out With C++: From Control Structures through Objects',
+  publisher: 'Addison-Wesley'
+}
+{
+  subCode: 'CSCI124',
+  bookTitle: 'Data Structures Using C++',
+  publisher: 'CENGAGE Learning'
+}
+{
+  subCode: 'CSCI124',
+  bookTitle: 'C++ Programming - Program design including data structure',
+  publisher: 'CENGAGE Learning'
+}
+{
+  subCode: 'CSCI124',
+  bookTitle: 'Starting Out With C++: From Control Structures through Objects',
+  publisher: 'Addison-Wesley'
+}
+{
+  subCode: 'CSCI203',
+  bookTitle: 'Introduction to Algorithms',
+  publisher: 'The MIT Press'
+}
+{
+  subCode: 'CSCI203',
+  bookTitle: 'Introduction to the Design and Analysis of Algorithms',
+  publisher: 'Pearson'
+}
+{
+  subCode: 'CSCI235',
+  bookTitle: 'Database Management Systems',
+  publisher: 'McGraw-Hill'
+}
+{
+  subCode: 'CSCI235',
+  bookTitle: 'Fundamentals of Database Systems',
+  publisher: 'Addison-Wesley'
+}

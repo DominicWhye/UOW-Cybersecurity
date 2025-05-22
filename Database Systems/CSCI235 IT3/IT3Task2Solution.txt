@@ -1,0 +1,329 @@
+>2(i) db.studentSeminar.find({ "seminar.seminarDescription": "In-memory Database." }).forEach(doc => printjson(doc))
+{
+  _id: ObjectId('682ef765b4d74740596c4bd3'),
+  seminar: {
+    seminarID: 'sem004',
+    seminarDescription: 'In-memory Database.',
+    seminarDate: '2-May-2025',
+    creditPoint: 3,
+    seminarEnrolment: [
+      {
+        studentID: 'std004',
+        enrolmentDate: '20-April-2025'
+      },
+      {
+        studentID: 'std002',
+        enrolmentDate: '10-April-2025'
+      }
+    ]
+  },
+  student: [
+    {
+      studentID: 'std004',
+      studentName: 'Klein Acevedo',
+      address: 'Block 23, Toa Payoh',
+      telephone: [
+        {
+          handphone1: '93589248',
+          handphone2: '82354723'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem004',
+          markReceived: 64
+        }
+      ]
+    },
+    {
+      studentID: 'std002',
+      studentName: 'Selma Hobbs',
+      address: '87 Pearl Hill',
+      telephone: [
+        {
+          handphone: '91647249',
+          residentphone: '62691355'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem004',
+          markReceived: 89
+        }
+      ]
+    }
+  ]
+}
+
+>2(ii) db.studentSeminar.countDocuments({ "seminar.seminarEnrolment.studentID": "std009" })
+2
+
+>2(iii) db.studentSeminar.find({ "student.enrolTo.markReceived": { $gt: 80 } }).forEach(doc => printjson(doc))
+{
+  _id: ObjectId('682ef765b4d74740596c4bd1'),
+  seminar: {
+    seminarID: 'sem002',
+    seminarDescription: 'Concurrency in Distributed Database.',
+    seminarDate: '5-May-2025',
+    creditPoint: 2,
+    seminarEnrolment: [
+      {
+        studentID: 'std006',
+        enrolmentDate: '30-April-2025'
+      },
+      {
+        studentID: 'std009',
+        enrolmentDate: '18-April-2025'
+      }
+    ]
+  },
+  student: [
+    {
+      studentID: 'std006',
+      studentName: 'Ofelia Ashley',
+      address: '123, Bukit Timah',
+      telephone: [
+        {
+          handphone: '93858134',
+          residentphone: '64352893'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem002',
+          markReceived: 79
+        }
+      ]
+    },
+    {
+      studentID: 'std009',
+      studentName: 'Sharon Smith',
+      address: '10 Bukit Timah Road',
+      telephone: [
+        {
+          handphone: '81881234',
+          residentphone: '64123456'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem002',
+          markReceived: 82
+        }
+      ]
+    }
+  ]
+}
+{
+  _id: ObjectId('682ef765b4d74740596c4bd3'),
+  seminar: {
+    seminarID: 'sem004',
+    seminarDescription: 'In-memory Database.',
+    seminarDate: '2-May-2025',
+    creditPoint: 3,
+    seminarEnrolment: [
+      {
+        studentID: 'std004',
+        enrolmentDate: '20-April-2025'
+      },
+      {
+        studentID: 'std002',
+        enrolmentDate: '10-April-2025'
+      }
+    ]
+  },
+  student: [
+    {
+      studentID: 'std004',
+      studentName: 'Klein Acevedo',
+      address: 'Block 23, Toa Payoh',
+      telephone: [
+        {
+          handphone1: '93589248',
+          handphone2: '82354723'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem004',
+          markReceived: 64
+        }
+      ]
+    },
+    {
+      studentID: 'std002',
+      studentName: 'Selma Hobbs',
+      address: '87 Pearl Hill',
+      telephone: [
+        {
+          handphone: '91647249',
+          residentphone: '62691355'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem004',
+          markReceived: 89
+        }
+      ]
+    }
+  ]
+}
+{
+  _id: ObjectId('682ef765b4d74740596c4bd4'),
+  seminar: {
+    seminarID: 'sem005',
+    seminarDescription: 'Network Security.',
+    seminarDate: '6-May-2025',
+    creditPoint: 0,
+    seminarEnrolment: [
+      {
+        studentID: 'std004',
+        enrolmentDate: '10-April-2025'
+      },
+      {
+        studentID: 'std005',
+        enrolmentDate: '10-April-2025'
+      },
+      {
+        studentID: 'std003',
+        enrolmentDate: '12-April-2025'
+      }
+    ]
+  },
+  student: [
+    {
+      studentID: 'std004',
+      studentName: 'Janie Hinton',
+      address: 'Block 1824, Sembawang Loop',
+      telephone: [
+        {
+          handphone1: '91793263',
+          residentphone: '65478223'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem005',
+          markReceived: 76
+        }
+      ]
+    },
+    {
+      studentID: 'std003',
+      studentName: 'Marcy Collier',
+      address: 'Block 384, Jurong West',
+      telephone: [
+        {
+          handphone1: '87396264',
+          residentphone: '69398059'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem005',
+          markReceived: 69
+        }
+      ]
+    },
+    {
+      studentID: 'std005',
+      studentName: 'Deann Larson',
+      address: '17 Bukit Panjang',
+      telephone: [
+        {
+          handphone: '91867237',
+          residentphone: '62783256'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem005',
+          markReceived: 92
+        }
+      ]
+    }
+  ]
+}
+
+>2(iv) db.studentSeminar.find({ "seminar.creditPoint": 3, "student.studentName": "Sharon Smith" }).forEach(doc => printjson(doc))
+{
+  _id: ObjectId('682ef765b4d74740596c4bd0'),
+  seminar: {
+    seminarID: 'sem001',
+    seminarDescription: 'Security in Databases.',
+    seminarDate: '25-April-2025',
+    prerequisite: 'Year 3 standing',
+    creditPoint: 3,
+    seminarEnrolment: [
+      {
+        studentID: 'std001',
+        enrolmentDate: '14-April-2025'
+      },
+      {
+        studentID: 'std009',
+        enrolmentDate: '18-April-2025'
+      }
+    ]
+  },
+  student: [
+    {
+      studentID: 'std001',
+      studentName: 'Richard Davis',
+      address: 'Block 140, Bukit Batok',
+      telephone: [
+        {
+          handphone: '92378888',
+          officephone: '64283333'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem001',
+          markReceived: 78
+        }
+      ]
+    },
+    {
+      studentID: 'std009',
+      studentName: 'Sharon Smith',
+      address: '10 Bukit Timah Road',
+      telephone: [
+        {
+          handphone: '81881234',
+          residentphone: '64123456'
+        }
+      ],
+      enrolTo: [
+        {
+          seminarID: 'sem001',
+          markReceived: 80
+        }
+      ]
+    }
+  ]
+}
+
+>2(v) db.studentSeminar.insertOne({ seminar: { seminarID: "sem006", seminarDescription: "Attending Online Course", seminarDate: "12-May-2025", creditPoint: 2 } })
+{
+  acknowledged: true,
+  insertedId: ObjectId('682f0b01574175ee076c4bd0')
+}
+
+>2(vi) db.studentSeminar.updateOne({ "seminar.seminarID": "sem006" }, { $set: { "seminar.seminarDate": "18-May-2025" } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+>2(vii) db.studentSeminar.updateOne({ "seminar.seminarID": "sem006" }, { $push: { student: { studentID: "std006", studentName: "Ofelia Ashley", address: "123, Bukit Timah", telephone: [{ handphone: "93858134", residentphone: "64352893" }], enrolTo: [{ seminarID: "sem006", markReceived: 0 }], enrolmentDate: "12-May-2025" } } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}

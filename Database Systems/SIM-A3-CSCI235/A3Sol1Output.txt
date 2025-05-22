@@ -1,0 +1,66 @@
+Teams:
+{
+  _id: 1,
+  name: 'Lions FC',
+  city: 'Singapore',
+  home_ground: 'Lion Stadium',
+  players: [
+    {
+      id: 101,
+      first_name: 'Ali',
+      last_name: 'Bin',
+      position: 'Forward',
+      number: 9
+    },
+    {
+      id: 102,
+      first_name: 'Ray',
+      last_name: 'Tan',
+      position: 'Defender',
+      number: 4
+    }
+  ]
+}
+{
+  _id: 2,
+  name: 'Tigers United',
+  city: 'Kuala Lumpur',
+  home_ground: 'Tiger Arena',
+  players: [
+    {
+      id: 201,
+      first_name: 'Raj',
+      last_name: 'Singh',
+      position: 'Midfield',
+      number: 8
+    },
+    {
+      id: 202,
+      first_name: 'Lim',
+      last_name: 'Wei',
+      position: 'Goalkeeper',
+      number: 1
+    }
+  ]
+}
+Games:
+{
+  _id: 1,
+  game_number: '001',
+  venue: 'National Stadium',
+  referee: 'James Low',
+  home_team: 1,
+  away_team: 2,
+  score_home_team: 2,
+  score_away_team: 1
+}
+{
+  _id: 2,
+  game_number: '002',
+  venue: 'Tiger Arena',
+  referee: 'Arun Das',
+  home_team: 2,
+  away_team: 1,
+  score_home_team: 3,
+  score_away_team: 3
+}
