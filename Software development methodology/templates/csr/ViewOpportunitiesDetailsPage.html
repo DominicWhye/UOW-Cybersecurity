@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block title %}Opportunity Details{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="m-0">Opportunity Details</h1>
+      <div class="d-flex gap-2 align-items-center">
+        <a href="{{ url_for('viewOpportunitiesPage') }}" class="plain-btn">Back to Opportunities</a>
+
+      </div>
+    </div>
+
+    <!-- Flash -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for msg in messages %}{{ msg }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if not opportunity %}
+      <div class="card"><div class="card-body"><p class="m-0">Opportunity not found.</p></div></div>
+    {% else %}
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="m-0">Request #{{ opportunity.request_id }}</h5>
+          <div>
+            {% if opportunity.request_status in (1, True, '1', 'true', 'True') %}
+              <span class="badge bg-success">Completed</span>
+            {% else %}
+              <span class="badge bg-platform-manager">Open</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Category</label>
+              <div class="form-control" readonly>
+                {% if opportunity.category_name %}
+                  {{ opportunity.category_name }}
+                {% else %}
+                  Category {{ opportunity.category_id }}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Date</label>
+              <input class="form-control" value="{{ opportunity.request_date }}" readonly>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Views</label>
+              <input class="form-control" value="{{ opportunity.request_view_count if opportunity.request_view_count is not none else 0 }}" readonly>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Shortlists</label>
+              <input class="form-control" value="{{ opportunity.request_shortlist_count if opportunity.request_shortlist_count is not none else 0 }}" readonly>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">PIN User</label>
+              <input class="form-control" value="{{ opportunity.pin_user_id if opportunity.pin_user_id is not none else '-' }}" readonly>
+            </div>
+
+            {% if opportunity.category_desc %}
+            <div class="col-12">
+              <label class="form-label">Category Description</label>
+              <div class="form-control" style="height:auto; min-height:44px;" readonly>{{ opportunity.category_desc }}</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+          <!-- Add to shortlist -->
+          <form method="post" action="{{ url_for('addToShortlistPage') }}" style="display:inline;">
+            <input type="hidden" name="request_id" value="{{ opportunity.request_id }}">
+            <button class="plain-btn" type="submit">Add to Shortlist</button>
+          </form>
+          <a href="{{ url_for('viewOpportunitiesPage') }}" class="plain-btn">Close</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .badge.bg-success{background:#28a745;color:#fff}
+  .badge.bg-platform-manager{background:#2575fc;color:#fff}
+</style>
+
+{% endblock %}

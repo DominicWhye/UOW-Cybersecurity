@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block title %}Create New Account{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Create New Account</h1>
+      <div class="d-flex align-items-center gap-3" style="margin-bottom: 25px;">
+        <a href="{{ url_for('viewUserAccountPage') }}" class="plain-btn">Back to Users</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for m in messages %}{{ m }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Create Form -->
+    <form class="card" method="post" action="{{ url_for('createUserAccountPage') }}">
+      <div class="card-header">
+        <h5 class="m-0">Account Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label" for="email">Email</label>
+            <input id="email" name="email" type="email" class="form-control" placeholder="name@example.com" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-group">
+              <input id="password" name="password" type="password" class="form-control" minlength="6" required>
+              <button class="plain-btn" type="button" onclick="togglePwd()" style="border-left:0;">Show</button>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="first_name">First Name</label>
+            <input id="first_name" name="first_name" type="text" class="form-control" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="last_name">Last Name</label>
+            <input id="last_name" name="last_name" type="text" class="form-control" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="address">Address</label>
+            <input id="address" name="address" type="text" class="form-control" placeholder="(optional)">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="phone">Phone</label>
+            <input id="phone" name="phone" type="text" class="form-control" placeholder="e.g. 91234567">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="role_id">Role</label>
+            <select id="role_id" name="role_id" class="form-select" required>
+              <option value="" selected disabled>Select a role</option>
+              <option value="1">User Admin</option>
+              <option value="2">Platform Manager</option>
+              <option value="3">Person In Need</option>
+              <option value="4">CSR Rep</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewUserAccountPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+function togglePwd(){
+  const i = document.getElementById('password');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+</script>
+
+{% endblock %}

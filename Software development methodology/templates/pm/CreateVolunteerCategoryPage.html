@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}Create Volunteer Category{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Create Volunteer Category</h1>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('viewVolunteerCategoryPage') }}" class="plain-btn">Back to Categories</a>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for msg in messages %}{{ msg }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Create Category Form -->
+    <form class="card" method="post" action="{{ url_for('createVolunteerCategoryPage') }}">
+      <div class="card-header">
+        <h5 class="m-0">Category Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- Category Name -->
+          <div class="col-md-6">
+            <label class="form-label" for="category_name">Category Name</label>
+            <input id="category_name" name="category_name" type="text" class="form-control"
+                   placeholder="e.g., Elderly Support, Education, Environment" required>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label class="form-label" for="category_desc">Description</label>
+            <textarea id="category_desc" name="category_desc" class="form-control" rows="3"
+                      placeholder="Briefly describe this volunteer category" required></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewVolunteerCategoryPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Category</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block title %}Update Volunteer Category{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Update Volunteer Category</h1>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('viewVolunteerCategoryPage') }}" class="plain-btn">Back to Categories</a>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for msg in messages %}
+            {{ msg }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Update Category Form -->
+    <form class="card" method="post" action="{{ url_for('updateVolunteerCategoryPage', category_id=category.category_id) }}">
+      <div class="card-header">
+        <h5 class="m-0">Category Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- Category ID (readonly) -->
+          <div class="col-md-4">
+            <label class="form-label" for="category_id">Category ID</label>
+            <input id="category_id" name="category_id" type="text" class="form-control"
+                   value="{{ category.category_id }}" disabled>
+          </div>
+
+          <!-- Category Name -->
+          <div class="col-md-8">
+            <label class="form-label" for="category_name">Category Name</label>
+            <input id="category_name" name="category_name" type="text" class="form-control"
+                   value="{{ category.category_name }}" placeholder="Enter category name" required>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label class="form-label" for="category_desc">Description</label>
+            <textarea id="category_desc" name="category_desc" class="form-control" rows="3"
+                      placeholder="Describe this volunteer category" required>{{ category.category_desc }}</textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewVolunteerCategoryPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

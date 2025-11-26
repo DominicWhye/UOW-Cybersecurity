@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block title %}Update User Account{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Update User Account</h1>
+      <a href="{{ url_for('viewUserAccountPage') }}" class="plain-btn">Back to User Accounts</a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for msg in messages %}
+            {{ msg }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Update Form -->
+    <form method="post" action="{{ url_for('updateUserAccountPage', user_id=user.user_id) }}">
+      <div class="card-header">
+        <h5 class="m-0">Account Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- User ID (disabled) -->
+          <div class="col-md-3">
+            <label for="user_id" class="form-label">User ID</label>
+            <input id="user_id" name="user_id" type="text" class="form-control" value="{{ user.user_id }}" disabled>
+          </div>
+
+          <!-- Created At (disabled) -->
+          <div class="col-md-3">
+            <label for="created_at" class="form-label">Created</label>
+            <input id="created_at" type="text" class="form-control" value="{{ user.created_at }}" disabled>
+          </div>
+
+          <!-- Role ID (dropdown matching input height) -->
+          <div class="col-md-3">
+            <label for="role_id" class="form-label">Role</label>
+            <select id="role_id" name="role_id" class="form-select form-control" required>
+              <option value="" disabled>Select role</option>
+              <option value="1" {{ 'selected' if user.role_id == 1 }}>User Admin</option>
+              <option value="2" {{ 'selected' if user.role_id == 2 }}>Platform Manager</option>
+              <option value="3" {{ 'selected' if user.role_id == 3 }}>Person In Need</option>
+              <option value="4" {{ 'selected' if user.role_id == 4 }}>CSR Rep</option>
+            </select>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input id="email" name="email" type="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+
+          <!-- Password -->
+          <div class="col-md-6">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+              <input id="password" name="password" type="password" class="form-control" value="{{ user.password }}">
+              <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Show/Hide Password">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+
+
+          <!-- First Name -->
+          <div class="col-md-6">
+            <label for="first_name" class="form-label">First Name</label>
+            <input id="first_name" name="first_name" type="text" class="form-control" value="{{ user.first_name }}" required>
+          </div>
+
+          <!-- Last Name -->
+          <div class="col-md-6">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input id="last_name" name="last_name" type="text" class="form-control" value="{{ user.last_name }}" required>
+          </div>
+
+          <!-- Address -->
+          <div class="col-12">
+            <label for="address" class="form-label">Address</label>
+            <input id="address" name="address" type="text" class="form-control" value="{{ user.address or '' }}">
+          </div>
+
+          <!-- Phone -->
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone</label>
+            <input id="phone" name="phone" type="text" class="form-control" value="{{ user.phone or user.phone_no or '' }}">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewUserAccountPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('togglePassword').addEventListener('click', function () {
+    const passwordInput = document.getElementById('password');
+    const icon = this.querySelector('i');
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+    }
+  });
+</script>
+
+{% endblock %}

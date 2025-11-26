@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+{% block title %}Completed Requests{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Completed Requests</h1>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('viewRequestPage') }}" class="plain-btn">Back to All Requests</a>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for msg in messages %}
+            {{ msg }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- ============================= -->
+    <!-- SEARCH + FILTER SECTION HERE -->
+    <!-- ============================= -->
+    <form method="GET" class="mb-4">
+      <div class="card p-3">
+
+        <!-- SEARCH BAR -->
+        <div class="d-flex gap-3 mb-3" style="max-width: 500px;">
+          <input 
+            id="requestKeywordInput"
+            type="text" 
+            name="request_keyword" 
+            class="form-control"
+            placeholder="Search completed requests..."
+            value="{{ search_term or '' }}"
+          >
+          <button type="submit" name="action" value="search" class="btn btn-primary">
+            Search
+          </button>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="d-flex flex-wrap gap-3 align-items-end">
+
+          <!-- Category Filter -->
+          <div>
+            <label class="form-label m-0 fw-semibold">Category</label>
+           <select name="category_id" class="form-select" style="width: 180px;">
+            <option value="">All</option>
+            {% if categories %}
+              {% for cat_id, cat_name in categories.items() %}
+                <option 
+                  value="{{ cat_id }}" 
+                  {% if selected_category == cat_id|string %}selected{% endif %}
+                >
+                  {{ cat_name }}
+                </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+          </div>
+
+          <!-- Date From -->
+          <div>
+            <label class="form-label m-0 fw-semibold">From</label>
+            <input 
+              type="date" 
+              name="start_date" 
+              class="form-control"
+              value="{{ start_date or '' }}"
+            >
+          </div>
+
+          <!-- Date To -->
+          <div>
+            <label class="form-label m-0 fw-semibold">To</label>
+            <input 
+              type="date" 
+              name="end_date" 
+              class="form-control"
+              value="{{ end_date or '' }}"
+            >
+          </div>
+
+          <!-- Filter Button -->
+          <button 
+            type="submit" 
+            name="action" 
+            value="filter" 
+            class="btn btn-secondary"
+          >
+            Filter
+          </button>
+
+        </div>
+      </div>
+    </form>
+    <!-- ============================= -->
+    <!-- END SEARCH + FILTER SECTION -->
+    <!-- ============================= -->
+
+    <!-- Completed Requests Table -->
+    {% if not completed_requests %}
+      <div class="card">
+        <div class="card-body">
+          <p class="m-0">You don’t have any completed requests yet.</p>
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="m-0">Completed Requests ({{ completed_requests|length }})</h5>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover m-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 90px;">ID</th>
+                  <th>Category</th>
+                  <th style="width: 160px;">Date</th>
+                  <th style="width: 120px;">Views</th>
+                  <th style="width: 140px;">Shortlists</th>
+                  <th style="width: 130px;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in completed_requests %}
+                <tr>
+                  <td class="text-monospace">{{ r.request_id }}</td>
+                  <td>{{ r.category_name }}</td>
+                  <td>{{ r.request_date }}</td>
+                  <td>{{ r.request_view_count }}</td>
+                  <td>{{ r.request_shortlist_count }}</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<style>
+  .text-monospace {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  .badge.bg-success {
+    background-color: #28a745;
+    color: white;
+  }
+</style>
+
+<script>
+  // Auto-submit when search field is cleared
+  document.getElementById('requestKeywordInput').addEventListener('input', function() {
+    const keyword = this.value.trim();
+    if (keyword === '') {
+      setTimeout(() => { 
+        document.querySelector('form').submit(); 
+      }, 200);
+    }
+  });
+</script>
+
+<style>
+  .text-monospace {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  .badge.bg-success {
+    background-color: #28a745;
+    color: white;
+  }
+</style>
+
+{% endblock %}

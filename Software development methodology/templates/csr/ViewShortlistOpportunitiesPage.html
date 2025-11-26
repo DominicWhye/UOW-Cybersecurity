@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block title %}My Shortlist{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="m-0">My Shortlist</h1>
+      <div class="d-flex gap-2 align-items-center">
+        <a href="{{ url_for('viewOpportunitiesPage') }}" class="plain-btn">Back to Opportunities</a>
+      
+      </div>
+    </div>
+
+    <!-- Flash -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for msg in messages %}{{ msg }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+     <!-- Search box for shortlist -->
+    <form class="card mb-4" method="get" action="{{ url_for('viewShortlistOpportunitiesPage') }}">
+      <div class="card-header">
+        <h5 class="m-0">Search shortlist</h5>
+      </div>
+      <div class="card-body row g-3">
+        <div class="col-md-10">
+          <label class="form-label">Search</label>
+          <input name="shortlist_keyword"
+                  id="shortlistKeywordInput"  
+                 type="text"
+                 class="form-control"
+                 value="{{ request.args.get('shortlist_keyword', '') }}"
+                 placeholder="Search by category name, description, or request ID">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="plain-btn" type="submit">
+            <i class="bi bi-search"></i> Search
+          </button>
+        </div>
+      </div>
+    </form>
+
+    {% if not shortlist %}
+      <div class="card">
+        <div class="card-body">
+          <p class="m-0">Your shortlist is empty.</p>
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="m-0">Shortlisted ({{ shortlist|length }})</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover m-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 100px;">Request ID</th>
+                  <th>Category</th>
+                  <th style="width: 160px;">Date</th>
+                  <th style="width: 110px;">Views</th>
+                  <th style="width: 130px;">Shortlists</th>
+                  <th style="width: 120px;">Status</th>
+                  <th style="width: 260px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in shortlist %}
+                <tr>
+                  <td class="text-monospace">{{ r.request_id }}</td>
+                  <td>
+                    {% if r.category_name %}
+                      {{ r.category_name }}
+                      {% if r.category_desc %}
+                        <div class="text-muted" style="font-size:.9rem;">{{ r.category_desc }}</div>
+                      {% endif %}
+                    {% else %}
+                      Category {{ r.category_id }}
+                    {% endif %}
+                  </td>
+                  <td>{{ r.request_date }}</td>
+                  <td>{{ r.request_view_count if r.request_view_count is not none else 0 }}</td>
+                  <td>{{ r.request_shortlist_count if r.request_shortlist_count is not none else 0 }}</td>
+                  <td>
+                    {% if r.request_status in (1, True, '1', 'true', 'True') %}
+                      <span class="badge bg-success">Completed</span>
+                    {% else %}
+                      <span class="badge bg-platform-manager">Open</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="btn-toolbar" role="toolbar" style="gap:8px; flex-wrap:wrap;">
+                      <a class="plain-btn" href="{{ url_for('viewOpportunitiesDetailsPage', request_id=r.request_id) }}">View Details</a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .text-monospace{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New",monospace}
+  .badge.bg-success{background:#28a745;color:#fff}
+  .badge.bg-platform-manager{background:#2575fc;color:#fff}
+</style>
+<script>
+  document.getElementById('shortlistKeywordInput').addEventListener('input', function(e) {
+    const keyword = this.value.trim().toLowerCase();
+    
+    // Auto-submit the form when field is completely empty
+    if (keyword === '') {
+      // Submit the form after a short delay to ensure visual feedback
+      setTimeout(() => {
+        document.querySelector('form').submit();
+      }, 200);
+    }
+  });
+</script>
+
+{% endblock %}

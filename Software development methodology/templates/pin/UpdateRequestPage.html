@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block title %}Update Request{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Update Request</h1>
+      <a href="{{ url_for('viewRequestPage') }}" class="plain-btn">Back to Requests</a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for msg in messages %}
+            {{ msg }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Update Form -->
+    <form method="post" action="{{ url_for('updateRequestPage', request_id=request.request_id) }}">
+      <div class="card-header">
+        <h5 class="m-0">Request Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- Request ID (disabled) -->
+          <div class="col-md-3">
+            <label for="request_id" class="form-label">Request ID</label>
+            <input id="request_id" name="request_id" type="text" class="form-control"
+                   value="{{ request.request_id }}" disabled>
+          </div>
+
+          <!-- Created At (disabled) -->
+          <div class="col-md-3">
+            <label for="created_at" class="form-label">Created</label>
+            <input id="created_at" type="text" class="form-control"
+                   value="{{ request.request_date }}" disabled>
+          </div>
+
+          <!-- Status (disabled display to mirror UX; change to a select if you want it editable) -->
+          <div class="col-md-3">
+            <label for="status" class="form-label">Status</label>
+            <input id="status" type="text" class="form-control"
+                   value="{% if request.request_status in (1, '1', True, 'true', 'True') %}Completed{% else %}Open{% endif %}"
+                   disabled>
+          </div>
+
+          <!-- Category (dropdown matching input height) -->
+          <div class="col-md-6">
+            <label for="category_id" class="form-label">Category</label>
+            <select id="category_id" name="category_id" class="form-select form-control" required>
+              <option value="" disabled>Select category</option>
+              {% for c in categories %}
+                <option value="{{ c.category_id }}" {{ 'selected' if c.category_id == request.category_id }}>
+                  {{ c.category_name }}{% if c.category_desc %} — {{ c.category_desc }}{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Views (disabled) -->
+          <div class="col-md-3">
+            <label for="views" class="form-label">Views</label>
+            <input id="views" type="text" class="form-control"
+                   value="{{ request.request_view_count }}" disabled>
+          </div>
+
+          <!-- Shortlists (disabled) -->
+          <div class="col-md-3">
+            <label for="shortlists" class="form-label">Shortlists</label>
+            <input id="shortlists" type="text" class="form-control"
+                   value="{{ request.request_shortlist_count }}" disabled>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewRequestPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

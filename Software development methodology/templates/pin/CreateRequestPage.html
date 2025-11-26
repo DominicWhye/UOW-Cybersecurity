@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block title %}Create Request{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Create Request</h1>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('viewRequestPage') }}" class="plain-btn">Back to Requests</a>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for msg in messages %}{{ msg }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Create Request Form -->
+    <form class="card" method="post" action="{{ url_for('createRequestPage') }}">
+      <div class="card-header">
+        <h5 class="m-0">Request Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- (Optional) Show current user -->
+          <div class="col-md-4">
+            <label class="form-label">User</label>
+            <input type="text" class="form-control" value="#{{ session.get('user_id') }}" readonly>
+          </div>
+
+          <!-- Category -->
+          <div class="col-md-8">
+            <label class="form-label" for="category_id">Category</label>
+            <select id="category_id" name="category_id" class="form-select" required>
+              <option value="" disabled selected>Select a category</option>
+              {% for c in categories %}
+                <option value="{{ c.category_id }}">
+                  {{ c.category_name }}{% if c.category_desc %} — {{ c.category_desc }}{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+            <small class="text-muted">Pick the category that best matches your request.</small>
+          </div>
+
+          <!-- (Optional) Notes -->
+          <div class="col-12">
+            <label class="form-label" for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3"
+                      placeholder="Add any extra context for reviewers"></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('viewRequestPage') }}" class="plain-btn">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Request</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

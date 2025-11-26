@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+
+<body>
+  {% if session.role_id == 3 %}
+    <h1 style="color: black;">This is the main page for PersonInNeed (PIN)</h1>
+  {% endif %}
+  {% if session.role_id == 4 %}
+    <h1 style="color: black;">This is the main page for CSR Rep</h1>
+  {% endif %}
+  <!-- <script src="js/scripts.js"></script> -->
+</body>
+</html>
+{% endblock %}

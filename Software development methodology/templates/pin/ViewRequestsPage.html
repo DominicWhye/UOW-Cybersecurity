@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block title %}Requests Dashboard{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="m-0">Requests</h1>
+
+      <!-- Action buttons -->
+      <div class="d-flex align-items-center gap-3" style="margin-bottom: 25px;">
+        <!-- Create new request -->
+        <a href="{{ url_for('createRequestPage') }}" 
+          class="btn btn-primary d-flex align-items-center gap-2">
+          <i class="bi bi-plus-circle"></i> Create Request
+        </a>
+
+        <!-- View completed requests -->
+        <a href="{{ url_for('viewCompletedRequestsPage', user_id=session.get('user_id')) }}" 
+          class="btn btn-success d-flex align-items-center gap-2">
+          <i class="bi bi-check2-circle"></i> View Completed
+        </a>
+      </div>
+    </div>
+
+    <!-- Requests Table -->
+    {% if not requests %}
+      <h2 style="text-align:center;">No requests found!</h2>
+    {% else %}
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="m-0">All Requests ({{ requests|length }})</h5>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover m-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th style="width: 200px;">Category Name</th>
+                <th>Category Description</th>
+                <th style="width: 140px;">Status</th>
+                <th style="width: 160px;">Date</th>
+                <th class="compact-column" style="width: 80px;">Views</th>
+                <th class="compact-column" style="width: 90px;">Shortlists</th>
+                <th style="width: 100px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in requests %}
+              <tr>
+                <td class="text-monospace">{{ r.request_id }}</td>
+                <td>
+                  {% if r.category_name %}
+                    {{ r.category_name }}
+                  {% elif category_map %}
+                    {{ category_map.get(r.category_id, {}).category_name if category_map.get(r.category_id) else 'Category ' ~ r.category_id }}
+                  {% else %}
+                    Category {{ r.category_id }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if r.category_desc %}
+                    <span class="text-muted">{{ r.category_desc }}</span>
+                  {% elif category_map and category_map.get(r.category_id) %}
+                    <span class="text-muted">{{ category_map.get(r.category_id).category_desc }}</span>
+                  {% else %}
+                    <span class="text-muted">-</span>
+                  {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-open">Open</span>
+                </td>
+                <td>{{ r.request_date }}</td>
+                <td class="compact-column">{{ r.request_view_count }}</td>
+                <td class="compact-column">{{ r.request_shortlist_count }}</td>
+                <td>
+                  <div class="btn-toolbar" role="toolbar">
+                    <div style="display: flex !important; flex-direction: row !important; gap: 0.5rem; align-items: center;">
+                      <!-- Update request -->
+                      <a class="btn btn-sm" href="{{ url_for('updateRequestPage', request_id=r.request_id) }}" title="Edit request" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; background-color: white; border: 1px solid #dee2e6; border-radius: 5px !important;">
+                        <i class="bi bi-pencil-square" style="color: #0d6efd; font-size: 16px;"></i>
+                      </a>
+                      <!-- Delete request -->
+                      <form method="post" action="{{ url_for('deleteRequestPage', request_id=r.request_id) }}" style="margin: 0; display: inline-block;">
+                        <button class="btn btn-sm" type="submit" title="Delete request" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #dc3545; color: white; border: none; cursor: pointer; border-radius: 5px !important;">
+                          <i class="bi bi-trash3-fill" style="color: white; font-size: 16px;"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+      <!-- Pagination (optional) -->
+      {% if pagination %}
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="text-muted small">Page {{ pagination.page }} of {{ pagination.pages }}</div>
+        <nav>
+          <ul class="pagination m-0">
+            <li class="page-item {{ 'disabled' if not pagination.prev_num }}">
+              <a class="page-link"
+                 href="{{ url_for('viewRequestPage', page=pagination.prev_num) }}">Prev</a>
+            </li>
+            <li class="page-item {{ 'disabled' if not pagination.next_num }}">
+              <a class="page-link"
+                 href="{{ url_for('viewRequestPage', page=pagination.next_num) }}">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Optional helper styles -->
+<style>
+  .bg-open { background: #198754; color: #fff; }
+  .text-monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+</style>
+
+{% endblock %}

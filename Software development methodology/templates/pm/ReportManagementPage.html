@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block title %}Popular Category Report{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Generate Category Report</h1>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning" role="alert">
+          {% for msg in messages %}{{ msg }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Report Form -->
+    <form class="card mb-4" method="get" action="{{ url_for('reportManagementPage') }}">
+      <div class="card-header">
+        <h5 class="m-0">Report Settings</h5>
+      </div>
+      <div class="card-body row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="report_period">Report Period</label>
+          <select id="report_period" name="report_period" class="form-select" required>
+            <option value="" disabled {% if not request.args.get('report_period') %}selected{% endif %}>Select period</option>
+            <option value="daily"   {% if request.args.get('report_period') == 'daily' %}selected{% endif %}>Daily</option>
+            <option value="weekly"  {% if request.args.get('report_period') == 'weekly' %}selected{% endif %}>Weekly</option>
+            <option value="monthly" {% if request.args.get('report_period') == 'monthly' %}selected{% endif %}>Monthly</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="report_date">Date / Start Date</label>
+          <input id="report_date" name="report_date" type="date" class="form-control" value="{{ request.args.get('report_date', '') }}" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="report_month">Month</label>
+          <input id="report_month" name="report_month" type="month" class="form-control" value="{{ request.args.get('report_month', '') }}" />
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <button class="plain-btn" type="submit"><i class="bi bi-file-earmark-bar-graph"></i> Generate Report</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Report Table -->
+    {% if report_data is defined and report_data %}
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="m-0">Report Results ({{ report_data|length }} categories)</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover m-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 80px;">Rank</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th style="width:140px;">Total Requests</th>
+                  <th style="width:140px;">Total Shortlists</th>
+                  <th style="width:140px;">Total Views</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in report_data %}
+                  <tr>
+                    <td class="text-monospace">{{ loop.index }}</td>
+                    <td>{{ item.category_name }}</td>
+                    <td>{{ item.category_desc }}</td>
+                    <td>{{ item.total_requests }}</td>
+                    <td>{{ item.total_shortlists }}</td>
+                    <td>{{ item.total_views }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% elif report_data is defined %}
+      <div class="card">
+        <div class="card-body">
+          <p class="m-0">No data available for the selected period.</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Optional helper styles -->
+<style>
+  .text-monospace{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+</style>
+
+<script>
+  // Enable/disable date or month fields based on selected period
+  (function() {
+    const periodSelect = document.getElementById('report_period');
+    const dateInput    = document.getElementById('report_date');
+    const monthInput   = document.getElementById('report_month');
+    function toggleInputs() {
+      const period = periodSelect.value;
+      if (period === 'monthly') {
+        dateInput.disabled  = true;
+        monthInput.disabled = false;
+      } else if (period === 'daily' || period === 'weekly') {
+        dateInput.disabled  = false;
+        monthInput.disabled = true;
+      } else {
+        dateInput.disabled  = false;
+        monthInput.disabled = false;
+      }
+    }
+    periodSelect.addEventListener('change', toggleInputs);
+    toggleInputs();
+  })();
+</script>
+
+{% endblock %}

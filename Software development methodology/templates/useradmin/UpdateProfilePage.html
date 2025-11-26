@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}Update User Profile{% endblock %}
+{% block content %}
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">Update User Profile</h1>
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('viewProfilePage') }}" class="plain-btn">Back to Profiles</a>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger" role="alert">
+          {% for msg in messages %}
+            {{ msg }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Update Profile Form -->
+    <form class="card" method="post" action="{{ url_for('updateProfilePage', role_id=profile.role_id) }}">
+      <div class="card-header">
+        <h5 class="m-0">Profile Details</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <!-- Role ID (readonly) -->
+          <div class="col-md-3">
+            <label class="form-label" for="role_id">Role ID</label>
+            <input id="role_id" name="role_id" type="text" class="form-control"
+                   value="{{ profile.role_id }}" disabled>
+          </div>
+
+          <!-- Role Name -->
+          <div class="col-md-9">
+            <label class="form-label" for="role_name">Role Name</label>
+            <input id="role_name" name="role_name" type="text" class="form-control"
+                   value="{{ profile.role_name }}" placeholder="e.g., Volunteer Lead, Event Manager" required>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label class="form-label" for="description">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="3" required>{{ profile.description }}</textarea>
+          </div>
+
+        </div>
+      </div>
+      <div class="d-flex justify-content-end gap-2" style="margin-right: 2%;">
+        <a href="{{ url_for('viewProfilePage') }}" class="plain-btn">Cancel</a>
+        <button name="action" value="save" type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+{% endblock %}
