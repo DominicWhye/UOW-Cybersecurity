@@ -16,7 +16,6 @@ This repository serves as a personal journal of my academic progress, assignment
 ## 🚀 Purpose
 
 - Track my growth and progress
-- Showcase work to future employers
 - Help other students who might find this useful
 
 ---
