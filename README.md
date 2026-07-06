@@ -1,6 +1,6 @@
 # UOW Cybersecurity
 
-Just a regular student from the University of Wollongong (UOW) documenting my learning journey and coursework as I pursue a degree in Computer Science (Cybersecurity).
+Just a regular student from the University of Wollongong (UOW) documenting my learning journey and coursework as I pursue a degree in Computer Science (Cybersecurity)
 
 ## 📘 About
 
