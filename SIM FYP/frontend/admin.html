@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — FRAS</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo/favicon.svg">
+  <link rel="stylesheet" href="style.css?v=8">
+  <script>if (!localStorage.getItem("token")) location.replace("index.html");</script>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1><img src="assets/logo/fras-logo-icon.svg" alt="" style="height:26px;vertical-align:-6px;margin-right:8px">FRAS
+      Admin Console</h1>
+    <div>
+      <span id="who" class="muted"></span>
+      <button class="danger" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="users">Users</button>
+    <button class="tab-btn" data-tab="faces">Face DB</button>
+    <button class="tab-btn" data-tab="courses">Courses</button>
+    <button class="tab-btn" data-tab="attendance">Attendance</button>
+    <button class="tab-btn" data-tab="appeals">Appeals</button>
+    <button class="tab-btn" data-tab="att-config">Attendance Config</button>
+    <button class="tab-btn" data-tab="ai-config">Model Management</button>
+    <button class="tab-btn" data-tab="ensemble">Ensemble Configuration</button>
+    <button class="tab-btn" data-tab="behaviour">Behaviour Analysis</button>
+  </div>
+
+  <main>
+    <section id="tab-users" class="panel">
+      <!-- List view (default) -->
+      <div id="users-list" class="subpage">
+        <div class="subpage-head">
+          <h2>All Users</h2>
+          <button type="button" id="show-user-form">+ Register User</button>
+        </div>
+        <input type="search" id="users-search" class="users-search"
+          placeholder="Search by name, student/staff number, email, or role…" autocomplete="off">
+        <p id="users-search-status" class="muted small" style="margin:.35rem 0 0"></p>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Name</th>
+              <th>Student#</th>
+              <th>Profile Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Register form view -->
+      <div id="users-form-view" class="subpage" hidden>
+        <button type="button" class="secondary back-btn" id="back-users">← Back to Users</button>
+        <h2 style="margin-top:1rem">Register User</h2>
+        <form id="user-form" class="row form-stacked">
+          <label>Email<input name="email" type="email" required></label>
+          <label>Password<input name="password" type="text" value="demo123" required></label>
+          <label>Role
+            <select name="role">
+              <option value="student">student</option>
+              <option value="teacher">teacher</option>
+              <option value="admin">admin</option>
+            </select>
+          </label>
+          <label>Full name<input name="full_name" required></label>
+          <label>Student ID<input name="student_id" placeholder="S00003"></label>
+          <label>Facial image (optional, students only)<input name="face_image" type="file" accept="image/*"></label>
+          <button type="submit">Create</button>
+        </form>
+        <p id="user-msg" class="error"></p>
+      </div>
+
+      <!-- User detail (View) view -->
+      <div id="users-detail-view" class="subpage" hidden>
+        <button type="button" class="secondary back-btn" id="back-users-detail">← Back to Users</button>
+        <div class="subpage-head" style="margin-top:1rem">
+          <h2>User Details</h2>
+          <button type="button" id="detail-edit-btn">Edit</button>
+        </div>
+        <table class="kv-table">
+          <tbody>
+            <tr>
+              <th>Account ID</th>
+              <td id="detail-id"></td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td id="detail-email"></td>
+            </tr>
+            <tr>
+              <th>Role</th>
+              <td id="detail-role"></td>
+            </tr>
+            <tr>
+              <th>Full name</th>
+              <td id="detail-name"></td>
+            </tr>
+            <tr>
+              <th>Student ID</th>
+              <td id="detail-student"></td>
+            </tr>
+            <tr>
+              <th>Staff ID</th>
+              <td id="detail-staff"></td>
+            </tr>
+            <tr>
+              <th>Profile status</th>
+              <td id="detail-status"></td>
+            </tr>
+            <tr>
+              <th>Created</th>
+              <td id="detail-created"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- User edit view -->
+      <div id="users-edit-view" class="subpage" hidden>
+        <button type="button" class="secondary back-btn" id="back-users-edit">← Back to Details</button>
+        <h2 style="margin-top:1rem">Edit User</h2>
+        <form id="user-edit-form" class="row form-stacked">
+          <label>Email<input name="email" type="email" required></label>
+          <label>Full name<input name="full_name" required></label>
+          <label>Student ID<input name="student_id" placeholder="1234567"></label>
+          <label>Staff ID<input name="staff_id" placeholder="1234567"></label>
+          <button type="submit">Save Changes</button>
+        </form>
+        <p id="user-edit-msg" class="error"></p>
+        <div class="row" style="margin-top:1rem;gap:.5rem;max-width:420px">
+          <button type="button" id="edit-deactivate-btn" class="danger">Deactivate</button>
+          <button type="button" id="edit-uploadface-btn" class="secondary">Upload Face</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-faces" class="panel" style="display:none">
+      <!-- List view (default) -->
+      <div id="faces-list" class="subpage">
+        <div class="subpage-head">
+          <div>
+            <h2>Facial Image Database</h2>
+            <p class="muted small" style="margin:.25rem 0 0">Add, replace, or remove facial embeddings. Uploaded images
+              are validated for face presence before storage.</p>
+          </div>
+          <button type="button" id="show-face-form">+ Add / Update Face</button>
+        </div>
+        <h3 style="margin-top:1.5rem">All Embeddings</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>FaceID</th>
+              <th>Account</th>
+              <th>Name</th>
+              <th>Student#</th>
+              <th>Model</th>
+              <th>Dim</th>
+              <th>Active</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="faces-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Add / update face form view -->
+      <div id="faces-form-view" class="subpage" hidden>
+        <button type="button" class="secondary back-btn" id="back-faces">← Back to Face DB</button>
+        <h2 style="margin-top:1rem">Add / Update Face for Existing Student</h2>
+        <form id="face-upload-form" class="row" enctype="multipart/form-data">
+          <label>Find student
+            <input type="search" id="face-user-search" placeholder="Search name or email…" autocomplete="off">
+          </label>
+          <label>Student
+            <select name="account_id" id="face-account-select" required></select>
+          </label>
+          <label>Facial image<input name="file" type="file" accept="image/*" required></label>
+          <button type="submit">Register / Update Face</button>
+        </form>
+        <p id="face-upload-msg" class="error"></p>
+      </div>
+    </section>
+
+    <section id="tab-courses" class="panel" style="display:none">
+      <h2>Course Management</h2>
+
+      <!-- Slide-out sub-menu: revealed when the Courses tab is opened -->
+      <nav id="courses-submenu" class="submenu">
+        <button type="button" class="submenu-btn active" data-sub="manage">Manage Courses</button>
+        <button type="button" class="submenu-btn" data-sub="enroll">Assign Students</button>
+        <button type="button" class="submenu-btn" data-sub="sessions">Class Sessions</button>
+      </nav>
+
+      <!-- Sub-page: Manage Courses -->
+      <div id="sub-manage" class="subpage">
+        <!-- List view (default) -->
+        <div id="courses-list">
+          <div class="subpage-head">
+            <h3>All Courses</h3>
+            <button type="button" id="show-course-form">+ Add Course</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Teacher</th>
+                <th>Status</th>
+                <th>Active Sessions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courses-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Add Course form view -->
+        <div id="courses-form-view" hidden>
+          <button type="button" class="secondary back-btn" id="back-courses">← Back to Courses</button>
+          <h3 style="margin-top:1rem">Add Course</h3>
+          <form id="course-form" class="row form-stacked">
+            <label>Course code<input name="course_code" required placeholder="CSIT128"></label>
+            <label>Course name<input name="course_name" required placeholder="Programming Fundamentals"></label>
+            <label>Assigned teacher
+              <select name="teacher_id" id="course-teacher-select">
+                <option value="">— No teacher —</option>
+              </select>
+            </label>
+            <button type="submit">Add Course</button>
+          </form>
+          <p id="course-msg" class="error"></p>
+        </div>
+
+        <!-- Edit Course view -->
+        <div id="courses-edit-view" hidden>
+          <button type="button" class="secondary back-btn" id="back-courses-edit">← Back to Courses</button>
+          <h3 style="margin-top:1rem">Edit Course</h3>
+          <p class="muted small" id="course-edit-subject" style="margin:0 0 1rem"></p>
+          <form id="course-edit-form" class="row form-stacked">
+            <label>Course code<input name="course_code" required></label>
+            <label>Course name<input name="course_name" required></label>
+            <label>Assigned teacher
+              <select name="teacher_id" id="course-edit-teacher-select">
+                <option value="">— No teacher —</option>
+              </select>
+            </label>
+            <label>Status
+              <select name="status" id="course-edit-status">
+                <option value="active">active</option>
+                <option value="inactive">inactive</option>
+              </select>
+            </label>
+            <button type="submit">Save Changes</button>
+          </form>
+          <p id="course-edit-msg" class="error"></p>
+        </div>
+      </div>
+
+      <!-- Sub-page: Assign Students -->
+      <div id="sub-enroll" class="subpage" hidden>
+        <h3>Assign Students to Course</h3>
+        <p class="muted small">Enroll students into a course so they can check in to its sessions.</p>
+        <form id="enrollment-form" class="row">
+          <label>Course
+            <select name="course_id" id="enroll-course-select" required></select>
+          </label>
+          <label>Find student
+            <input type="search" id="enroll-student-search" placeholder="Search name or student ID…" autocomplete="off">
+          </label>
+          <label>Student
+            <select name="account_id" id="enroll-student-select" required></select>
+          </label>
+          <button type="submit">Assign Student</button>
+        </form>
+        <p id="enrollment-msg" class="error"></p>
+
+        <h4 style="margin-top:1rem">Enrolled Students</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="enrollments-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Sub-page: Class Sessions -->
+      <div id="sub-sessions" class="subpage" hidden>
+        <!-- List view (default) -->
+        <div id="sessions-list">
+          <div class="subpage-head">
+            <h3>Scheduled Sessions</h3>
+            <button type="button" id="show-session-form">+ Schedule Session</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Course</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sessions-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Schedule Class Session form view -->
+        <div id="sessions-form-view" hidden>
+          <button type="button" class="secondary back-btn" id="back-sessions">← Back to Sessions</button>
+          <h3 style="margin-top:1rem">Schedule Class Session</h3>
+          <p class="muted small">Set the date and time for a course session. Students enrolled in the course can check
+            in
+            during the active window.</p>
+          <form id="session-form" class="row form-stacked">
+            <label>Course
+              <select name="course_id" id="session-course-select" required></select>
+            </label>
+            <label>Start time<input name="start_time" type="datetime-local" required></label>
+            <label>End time<input name="end_time" type="datetime-local"></label>
+            <label>Status
+              <select name="status">
+                <option value="scheduled">scheduled</option>
+                <option value="active">active</option>
+                <option value="ended">ended</option>
+                <option value="cancelled">cancelled</option>
+              </select>
+            </label>
+            <button type="submit">Schedule Session</button>
+          </form>
+          <p id="session-msg" class="error"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-attendance" class="panel" style="display:none">
+      <h2>Attendance Overview</h2>
+
+      <div class="att-filters" style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.75rem">
+        <input type="search" id="att-f-course" placeholder="🔍 Course" style="flex:1;min-width:140px">
+        <input type="search" id="att-f-student" placeholder="🔍 Student / ID" style="flex:1;min-width:140px">
+        <label class="small" style="display:flex;align-items:center;gap:.3rem">From
+          <input type="date" id="att-f-date-from" style="min-width:140px"></label>
+        <label class="small" style="display:flex;align-items:center;gap:.3rem">To
+          <input type="date" id="att-f-date-to" style="min-width:140px"></label>
+        <select id="att-f-status" style="min-width:120px">
+          <option value="">All statuses</option>
+        </select>
+        <button type="button" id="att-f-clear" class="secondary">Clear</button>
+        <span id="att-f-count" class="muted small"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Session</th>
+            <th>Course</th>
+            <th>Start</th>
+            <th>Student</th>
+            <th>Status</th>
+            <th>Marked</th>
+          </tr>
+        </thead>
+        <tbody id="att-body"></tbody>
+      </table>
+    </section>
+
+    <section id="tab-appeals" class="panel" style="display:none">
+      <div id="appeals-list-view">
+        <h2>Student Appeals</h2>
+        <p class="muted small">View-only oversight — appeals are reviewed and decided by the course teacher.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Appeal ID</th>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              <th>Record ID</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="appeals-body"></tbody>
+        </table>
+      </div>
+
+      <div id="appeals-detail-view" style="display:none; max-width: 800px; margin: 0 auto;">
+        <div style="margin-bottom: 20px;">
+          <button type="button" id="btn-back-to-appeals" class="secondary" style="padding: 8px 16px;">← Back to
+            List</button>
+        </div>
+
+        <div class="detail-card"
+          style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e1e4e8; overflow: hidden;">
+          <div
+            style="background: #f6f8fa; padding: 16px 24px; border-bottom: 1px solid #e1e4e8; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #24292e; font-size: 1.1rem; font-weight: 600;">Appeal Request Details</h3>
+            <span id="detail-status"
+              style="padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;"></span>
+          </div>
+
+          <div style="padding: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Appeal
+                ID</span>
+              <strong id="detail-appeal-id" style="font-size: 1rem; color: #24292e;">-</strong>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Attendance
+                Record ID</span>
+              <strong id="detail-record-id" style="font-size: 1rem; color: #0366d6;">-</strong>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Student
+                ID</span>
+              <strong id="detail-student-id" style="font-size: 1rem; color: #24292e;">-</strong>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Student
+                Name</span>
+              <strong id="detail-full-name" style="font-size: 1rem; color: #24292e;">-</strong>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Created
+                At</span>
+              <span id="detail-created-at" style="color: #24292e; font-weight: 500;">-</span>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Reviewed
+                At</span>
+              <span id="detail-reviewed-at" style="color: #24292e; font-weight: 500;">-</span>
+            </div>
+            <div style="border-bottom: 1px solid #f0f2f5; padding-bottom: 10px;">
+              <span
+                style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 4px;">Reviewed
+                By</span>
+              <span id="detail-reviewed-by" style="color: #24292e; font-weight: 500;">-</span>
+              <span id="detail-reviewer-meta" class="muted"
+                style="display: block; font-size: 0.8rem; margin-top: 2px;"></span>
+            </div>
+          </div>
+
+          <div style="padding: 0 24px 24px 24px;">
+            <span
+              style="display: block; font-size: 0.85rem; color: #586069; text-transform: uppercase; margin-bottom: 8px;">Reason
+              for Appeal</span>
+            <div id="detail-reason"
+              style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 16px; color: #24292e; line-height: 1.6; min-height: 60px; white-space: pre-wrap;">
+              -</div>
+          </div>
+
+          <div id="adm-appeal-doc-section" style="display:none;margin-top:16px">
+            <h3 style="margin:0 0 .5rem">Supporting Document</h3>
+            <p id="adm-appeal-doc-msg" class="small muted" style="margin:0 0 .5rem"></p>
+            <img id="adm-appeal-doc-image" alt="Supporting document submitted by the student"
+              style="display:none;max-width:100%;max-height:420px;border:1px solid #e1e4e8;border-radius:6px">
+            <a id="adm-appeal-doc-link" target="_blank" rel="noopener" style="display:none">Open
+              document in a new tab</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-att-config" class="panel" style="display:none">
+      <h2>Attendance Configuration</h2>
+      <p class="muted small">Institution-wide thresholds used by the automated check-in and
+        reminder logic. Changes apply to all future sessions.</p>
+      <form id="att-config-form" class="row">
+        <label>Detection interval (seconds)
+          <input type="number" name="detection_interval_seconds" min="3" max="86400" required>
+          <span class="muted small">Default gap between detection windows during a scan (e.g. 1200 = 20 min).</span>
+        </label>
+        <label>Late grace (seconds)
+          <input type="number" name="late_grace_seconds" min="0" max="86400" required>
+          <span class="muted small">A student first seen within this many seconds of scan start is still on-time.</span>
+        </label>
+        <label>Minimum attendance rate (%)
+          <input type="number" name="minimum_rate" min="0" max="100" step="0.1" required>
+        </label>
+        <label>Absence reminder threshold (sessions)
+          <input type="number" name="consecutive_threshold" min="1" max="100" required>
+        </label>
+        <button type="submit">Save</button>
+        <p id="att-config-msg" class="small"></p>
+      </form>
+    </section>
+
+    <section id="tab-ai-config" class="panel" style="display:none">
+      <h2>Model Management</h2>
+
+      <h3 style="margin-top:1rem">Assign Training & Testing Data</h3>
+      <p class="muted small">Choose which subset of registered facial embeddings is used as the training set vs. the
+        held-out test set for the next model run.</p>
+      <form id="training-data-form" class="row">
+        <label>Train split (%)<input name="train_pct" type="number" min="10" max="95" value="80"></label>
+        <label>Target model
+          <select name="model_name">
+            <option value="arcface">arcface (SCRFD + ArcFace)</option>
+            <option value="facenet">facenet (MTCNN + FaceNet)</option>
+          </select>
+        </label>
+        <button type="submit">Save Data Assignment</button>
+      </form>
+      <p id="training-data-msg" class="error"></p>
+
+      <h3 style="margin-top:1.5rem">Configure & Train ML Model</h3>
+      <p class="muted small">Evaluates recognition over the assigned embedding data (genuine vs. imposter pairs)
+        and re-fits the similarity threshold for the selected model. Progress and accuracy statistics are
+        reported below; deploy the result to activate it.</p>
+      <button id="recalibrate-btn">Start Training</button>
+      <div id="train-progress-wrap" style="display:none;max-width:420px;margin-top:.75rem">
+        <div style="background:var(--c-border-2);border-radius:6px;overflow:hidden;height:10px">
+          <div id="train-progress-bar" style="background:var(--c-primary);height:100%;width:0%"></div>
+        </div>
+      </div>
+      <p id="recalibrate-status" class="muted small" style="margin-top:.5rem"></p>
+      <div id="train-result" style="display:none;margin-top:.5rem">
+        <table style="max-width:560px">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>New threshold</th>
+              <th>Accuracy</th>
+              <th>FP rate</th>
+              <th>FN rate</th>
+              <th>Pairs (gen/imp)</th>
+            </tr>
+          </thead>
+          <tbody id="train-result-body"></tbody>
+        </table>
+        <button id="deploy-btn" style="margin-top:.5rem">Deploy This Model</button>
+        <p id="deploy-msg" class="small"></p>
+      </div>
+
+      <h3 style="margin-top:1.5rem">Retrain & Redeploy</h3>
+      <p class="muted small">One click: re-evaluate the selected model on the latest data and deploy the new
+        threshold. If it scores worse than the current deployment you will be asked to confirm.</p>
+      <button id="retrain-btn">Retrain & Redeploy</button>
+      <p id="retrain-msg" class="error"></p>
+    </section>
+
+    <section id="tab-ensemble" class="panel" style="display:none">
+      <h2>Ensemble Configuration</h2>
+      <p class="muted small">Select one or more trained models. Two or more are combined via majority voting
+        (e.g. SCRFD + ArcFace and MTCNN + FaceNet) with the chosen weighting; a single model runs on its own.</p>
+      <form id="ensemble-form" class="row">
+        <label><input type="checkbox" name="use_arcface" checked> SCRFD + ArcFace</label>
+        <label><input type="checkbox" name="use_facenet" checked> MTCNN + FaceNet</label>
+        <label>Voting weights
+          <select name="weighting">
+            <option value="equal">Equal weighting</option>
+            <option value="confidence">Confidence-weighted</option>
+          </select>
+        </label>
+        <button type="submit">Save Ensemble Config</button>
+      </form>
+      <p id="ensemble-msg" class="error"></p>
+    </section>
+
+    <section id="tab-behaviour" class="panel" style="display:none">
+      <h2>Classroom Behaviour Analysis Settings</h2>
+      <p class="muted small">Per-course toggle for in-class behaviour analysis. When enabled, the
+        system may flag drowsiness / phone use and build an activity heatmap for that course's sessions.</p>
+      <form id="behaviour-form" class="beh-form">
+        <label class="beh-course">Course
+          <select id="behaviour-course"></select>
+        </label>
+
+        <!-- Feature switches: one row per capability, directly under the
+             course they apply to. -->
+        <div class="beh-switches">
+          <label><input type="checkbox" name="enable" id="behaviour-enable">
+            <span>Enable behaviour analysis</span></label>
+          <label><input type="checkbox" name="drowsiness" id="behaviour-drowsiness" checked>
+            <span>Drowsiness detection</span></label>
+          <label><input type="checkbox" name="phone_usage" id="behaviour-phone" checked>
+            <span>Phone-use detection</span></label>
+          <label><input type="checkbox" name="heatmap" id="behaviour-heatmap" checked>
+            <span>Activity heatmap</span></label>
+        </div>
+
+        <fieldset class="beh-sensitivity">
+          <legend>Detection sensitivity</legend>
+          <p class="muted small" style="margin:0 0 1rem">
+            Rooms differ in lighting and camera distance, so one global setting cannot suit
+            every class. Each slider starts at the server default; move it and the effect on
+            the model is explained underneath.
+          </p>
+
+          <div class="beh-adaptive">
+            <label>
+              <input type="checkbox" id="behaviour-adaptive" checked>
+              <span>Calibrate each student's eyes individually</span>
+            </label>
+            <p class="muted small">
+              Recommended — compares a student against their own open-eye measurement instead
+              of a fixed value, which varies far more between people than between alert and
+              drowsy for one person.
+            </p>
+          </div>
+
+          <div class="beh-adaptive">
+            <label>
+              <input type="checkbox" id="behaviour-adaptive-headpose" checked>
+              <span>Calibrate each student's resting head angle individually</span>
+            </label>
+            <p class="muted small">
+              Recommended — compares a student against their OWN resting pitch instead of a
+              fixed angle. Resting posture varies with the student and the chair (a reclining
+              seat shifts the whole baseline), so a fixed angle either misses genuine head-down
+              or flags normal posture shifts as inattentive.
+            </p>
+          </div>
+
+          <!-- Sliders are rendered from BEHAVIOUR_TUNING_FIELDS in admin.js so
+               the range, default and guidance text live in one place. -->
+          <div id="behaviour-sliders"></div>
+        </fieldset>
+
+        <button type="submit" class="beh-save">Save Settings</button>
+      </form>
+      <p id="behaviour-msg" class="small"></p>
+    </section>
+
+  </main>
+
+  <!-- Filled in by renderBrowserNotice() in app.js; the role selects the text. -->
+  <div class="browser-notice" data-role="admin"></div>
+
+  <script src="config.js?v=1"></script>
+  <script src="app.js?v=15"></script>
+  <script src="admin.js?v=15"></script>
+</body>
+
+</html>
